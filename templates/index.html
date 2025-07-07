@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GitHub Webhook Events</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            margin: 40px;
+        }
+        h2 {
+            text-align: center;
+        }
+        #events {
+            max-width: 700px;
+            margin: 30px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        p {
+            font-size: 1.1em;
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+        }
+        p:last-child {
+            border-bottom: none;
+        }
+    </style>
+    <script>
+        function fetchData() {
+            fetch('/latest')
+                .then(res => res.json())
+                .then(data => {
+                    const container = document.getElementById('events');
+                    container.innerHTML = '';
+                    if (data.length === 0) {
+                        container.innerHTML = '<p>No events yet. Push or PR something!</p>';
+                    } else {
+                        data.forEach(item => {
+                            const p = document.createElement('p');
+                            p.textContent = item.message;
+                            container.appendChild(p);
+                        });
+                    }
+                })
+                .catch(err => {
+                    console.error("Error fetching events:", err);
+                    document.getElementById('events').innerHTML = '<p>Error loading events. Please check server.</p>';
+                });
+        }
+
+        setInterval(fetchData, 15000); // Refresh every 15 seconds
+        window.onload = fetchData;
+    </script>
+</head>
+<body>
+    <h2>GitHub Event Tracker</h2>
+    <div id="events"></div>
+</body>
+</html>
